@@ -153,7 +153,8 @@ def _iter_csv(queryset, file_obj, **kwargs):
     yield writer.writerow(merged_header_map)
 
     for record in values_qs:
-        record = _sanitize_record(field_serializer_map, record, custom_none_name)
+        record = _sanitize_record(field_serializer_map, record,
+                                  custom_none_name)
         yield writer.writerow(record)
 
 

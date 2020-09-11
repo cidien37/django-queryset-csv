@@ -62,7 +62,7 @@ class SanitizeUnicodeRecordTests(TestCase):
 
     def test_sanitize_with_custom_none_name(self):
         """
-        Ensure we retrieve custom none name if model field is None
+        Ensure we retrieve custom none name
         """
         record = {'name': 'Tenar',
                   'created': None}
@@ -72,10 +72,6 @@ class SanitizeUnicodeRecordTests(TestCase):
         self.assertEqual(sanitized,
                          {'name': 'Tenar',
                           'created': custom_name_for_nones})
-        """
-        Ensure we retrieve custom none name if user provided None 
-        for field value
-        """
 
         record = {'name': 'Tenar',
                   'created': datetime.datetime(1, 1, 1)}

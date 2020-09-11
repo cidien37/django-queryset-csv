@@ -73,7 +73,8 @@ class SanitizeUnicodeRecordTests(TestCase):
                          {'name': 'Tenar',
                           'created': custom_name_for_nones})
         """
-        Ensure we retrieve custom none name if user provided None for field value
+        Ensure we retrieve custom none name if user provided None 
+        for field value
         """
 
         record = {'name': 'Tenar',

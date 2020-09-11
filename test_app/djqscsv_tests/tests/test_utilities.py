@@ -47,7 +47,7 @@ class SanitizeUnicodeRecordTests(TestCase):
     def test_sanitize(self):
         record = {'name': 'Tenar',
                   'nickname': u'\ufeffThe White Lady of Gont'}
-        sanitized = djqscsv._sanitize_record({}, record)
+        sanitized = djqscsv._sanitize_record({}, record, None)
         self.assertEqual(sanitized,
                          {'name': 'Tenar',
                           'nickname': u'\ufeffThe White Lady of Gont'})
@@ -55,10 +55,33 @@ class SanitizeUnicodeRecordTests(TestCase):
     def test_sanitize_date(self):
         record = {'name': 'Tenar',
                   'created': datetime.datetime(1, 1, 1)}
-        sanitized = djqscsv._sanitize_record({}, record)
+        sanitized = djqscsv._sanitize_record({}, record, None)
         self.assertEqual(sanitized,
                          {'name': 'Tenar',
                           'created': '0001-01-01T00:00:00'})
+
+    def test_sanitize_with_custom_none_name(self):
+        """
+        Ensure we retrieve custom none name if model field is None
+        """
+        record = {'name': 'Tenar',
+                  'created': None}
+        custom_name_for_nones = "custom_name_for_nones"
+        sanitized = djqscsv._sanitize_record({}, record, custom_name_for_nones)
+        self.assertEqual(sanitized,
+                         {'name': 'Tenar',
+                          'created': custom_name_for_nones})
+        """
+        Ensure we retrieve custom none name if user provided None for field value
+        """
+
+        record = {'name': 'Tenar',
+                  'created': datetime.datetime(1, 1, 1)}
+        serializer = {'created': lambda x: None}
+        sanitized = djqscsv._sanitize_record(serializer, record, custom_name_for_nones)
+        self.assertEqual(sanitized,
+                         {'name': 'Tenar',
+                          'created': custom_name_for_nones})
 
     def test_sanitize_date_with_non_string_formatter(self):
         """
@@ -68,14 +91,14 @@ class SanitizeUnicodeRecordTests(TestCase):
         """
         record = {'name': 'Tenar'}
         serializer = {'name': lambda d: len(d)}
-        sanitized = djqscsv._sanitize_record(serializer, record)
+        sanitized = djqscsv._sanitize_record(serializer, record, None)
         self.assertEqual(sanitized, {'name': '5'})
 
     def test_sanitize_date_with_formatter(self):
         record = {'name': 'Tenar',
                   'created': datetime.datetime(1973, 5, 13)}
         serializer = {'created': lambda d: d.strftime('%Y-%m-%d')}
-        sanitized = djqscsv._sanitize_record(serializer, record)
+        sanitized = djqscsv._sanitize_record(serializer, record, None)
         self.assertEqual(sanitized,
                          {'name': 'Tenar',
                           'created': '1973-05-13'})
@@ -84,7 +107,7 @@ class SanitizeUnicodeRecordTests(TestCase):
         record = {'name': 'Tenar',
                   'created': datetime.datetime(1973, 5, 13)}
         with self.assertRaises(AttributeError):
-            djqscsv._sanitize_record(attrgetter('day'), record)
+            djqscsv._sanitize_record(attrgetter('day'), record, None)
 
 
 class AppendDatestampTests(TestCase):

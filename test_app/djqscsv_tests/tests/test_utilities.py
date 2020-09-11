@@ -67,7 +67,8 @@ class SanitizeUnicodeRecordTests(TestCase):
         record = {'name': 'Tenar',
                   'created': None}
         custom_name_for_nones = "custom_name_for_nones"
-        sanitized = djqscsv._sanitize_record({}, record, custom_name_for_nones)
+        sanitized = djqscsv._sanitize_record({}, record,
+                                             custom_name_for_nones)
         self.assertEqual(sanitized,
                          {'name': 'Tenar',
                           'created': custom_name_for_nones})
@@ -78,7 +79,8 @@ class SanitizeUnicodeRecordTests(TestCase):
         record = {'name': 'Tenar',
                   'created': datetime.datetime(1, 1, 1)}
         serializer = {'created': lambda x: None}
-        sanitized = djqscsv._sanitize_record(serializer, record, custom_name_for_nones)
+        sanitized = djqscsv._sanitize_record(serializer, record,
+                                             custom_name_for_nones)
         self.assertEqual(sanitized,
                          {'name': 'Tenar',
                           'created': custom_name_for_nones})
